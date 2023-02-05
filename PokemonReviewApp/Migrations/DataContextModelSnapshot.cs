@@ -116,6 +116,8 @@ namespace PokemonReviewApp.Migrations
 
                     b.HasKey("PokemonId", "CategoryId");
 
+                    b.HasIndex("CategoryId");
+
                     b.ToTable("PokemonCategories");
                 });
 
@@ -204,7 +206,7 @@ namespace PokemonReviewApp.Migrations
                 {
                     b.HasOne("PokemonReviewApp.Models.Category", "Category")
                         .WithMany("PokemonCategories")
-                        .HasForeignKey("PokemonId")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

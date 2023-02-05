@@ -10,3 +10,4 @@
         public Pokemon Pokemon { get; set; }
     }
 }
+

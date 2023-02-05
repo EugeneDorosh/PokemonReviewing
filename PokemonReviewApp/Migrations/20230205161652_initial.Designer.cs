@@ -12,8 +12,8 @@ using PokemonReviewApp.Data;
 namespace PokemonReviewApp.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230205145443_initialCreate")]
-    partial class initialCreate
+    [Migration("20230205161652_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -118,6 +118,8 @@ namespace PokemonReviewApp.Migrations
 
                     b.HasKey("PokemonId", "CategoryId");
 
+                    b.HasIndex("CategoryId");
+
                     b.ToTable("PokemonCategories");
                 });
 
@@ -206,7 +208,7 @@ namespace PokemonReviewApp.Migrations
                 {
                     b.HasOne("PokemonReviewApp.Models.Category", "Category")
                         .WithMany("PokemonCategories")
-                        .HasForeignKey("PokemonId")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PokemonReviewApp.Migrations
 {
-    public partial class initialCreate : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -96,8 +96,8 @@ namespace PokemonReviewApp.Migrations
                 {
                     table.PrimaryKey("PK_PokemonCategories", x => new { x.PokemonId, x.CategoryId });
                     table.ForeignKey(
-                        name: "FK_PokemonCategories_Categories_PokemonId",
-                        column: x => x.PokemonId,
+                        name: "FK_PokemonCategories_Categories_CategoryId",
+                        column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -166,6 +166,11 @@ namespace PokemonReviewApp.Migrations
                 name: "IX_Owners_CountryId",
                 table: "Owners",
                 column: "CountryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PokemonCategories_CategoryId",
+                table: "PokemonCategories",
+                column: "CategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PokemonOwners_OwnerId",

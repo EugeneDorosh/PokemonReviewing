@@ -23,21 +23,25 @@ namespace PokemonReviewApp.Data
         {
             modelBuilder.Entity<PokemonCategory>()
                 .HasKey(pc => new { pc.PokemonId, pc.CategoryId });
+
             modelBuilder.Entity<PokemonCategory>()
                 .HasOne(pc => pc.Pokemon)
                 .WithMany(x => x.PokemonCategories)
                 .HasForeignKey(x => x.PokemonId);
+
             modelBuilder.Entity<PokemonCategory>()
                 .HasOne(pc => pc.Category)
-                .WithMany(x => x.PokemonCategories)
-                .HasForeignKey(x => x.CategoryId);
+                .WithMany(pc => pc.PokemonCategories)
+                .HasForeignKey(pc => pc.CategoryId);
 
             modelBuilder.Entity<PokemonOwner>()
                 .HasKey(po => new { po.PokemonId, po.OwnerId });
+
             modelBuilder.Entity<PokemonOwner>()
                 .HasOne(p => p.Pokemon)
                 .WithMany(pc => pc.PokemonOwners)
                 .HasForeignKey(po => po.PokemonId);
+
             modelBuilder.Entity<PokemonOwner>()
                 .HasOne(o => o.Owner)
                 .WithMany(po => po.PokemonOwners)
