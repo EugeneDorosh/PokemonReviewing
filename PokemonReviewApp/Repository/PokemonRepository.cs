@@ -1,4 +1,5 @@
-﻿using PokemonReviewApp.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using PokemonReviewApp.Data;
 using PokemonReviewApp.Interface;
 using PokemonReviewApp.Models;
 
@@ -11,6 +12,40 @@ namespace PokemonReviewApp.Repository
         public PokemonRepository(DataContext context)
         {
             _context = context;
+        }
+
+        public bool CreatePokemon(int ownerId, int categoryId, Pokemon pokemon)
+        {
+            Owner pokemonOwnerEntity = _context.Owners.FirstOrDefault(x => x.Id == ownerId);
+            Category pokemonCategoryEntity = _context.Categories.FirstOrDefault(x => x.Id!= categoryId);
+
+            var pokemonOwner = new PokemonOwner()
+            {
+                Owner = pokemonOwnerEntity,
+                Pokemon = pokemon
+            };
+
+            _context.Add(pokemonOwner);
+
+            var pokemonCategory = new PokemonCategory()
+            { 
+                Pokemon = pokemon,
+                Category = pokemonCategoryEntity
+            };
+            _context.Add(pokemonCategory);
+
+/*            pokemon.PokemonOwners.Add(pokemonOwner);
+            pokemon.PokemonCategories.Add(pokemonCategory);*/
+
+            _context.Add(pokemon);
+
+            return Save();
+        }
+
+        public bool DeletePokemon(Pokemon pokemon)
+        {
+            _context.Remove(pokemon);
+            return Save();
         }
 
         public Pokemon GetPokemon(int id)
@@ -37,6 +72,17 @@ namespace PokemonReviewApp.Repository
         public bool PokemonExists(int pokemonId)
         {
             return _context.Pokemon.Any(x => x.Id == pokemonId);
+        }
+
+        public bool Save()
+        {
+            return _context.SaveChanges() > 0;
+        }
+
+        public bool UpdatePokemon(Pokemon pokemon)
+        {
+            _context.Update(pokemon);
+            return Save();
         }
     }
 }

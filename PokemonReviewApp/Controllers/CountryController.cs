@@ -74,5 +74,87 @@ namespace PokemonReviewApp.Controllers
 
             return Ok(owners);
         }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateCountry([FromBody] CountryDto countryCreate)
+        {
+            if (countryCreate == null)
+                return BadRequest(ModelState);
+
+            var country = _countryRepository.GetCountries()
+                .FirstOrDefault(c => c.Name.Trim().ToUpper() == countryCreate.Name.TrimEnd().ToUpper());
+
+            if (country != null)
+            {
+                ModelState.AddModelError("", "Country already exists.");
+                return StatusCode(422, ModelState);
+            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var countryMap = _mapper.Map<Country>(countryCreate);
+
+            if (!_countryRepository.CreateCountry(countryMap))
+            {
+                ModelState.AddModelError("", "Something went wrong during saving.");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Seccessfully created.");
+        }
+
+        [HttpPut("{countryId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateCategory(int countryId, [FromBody] CountryDto updatedCountry)
+        {
+            if (updatedCountry == null)
+                return BadRequest(ModelState);
+
+            if (countryId != updatedCountry.Id)
+                return BadRequest(ModelState);
+
+            if (!_countryRepository.CountryExists(countryId))
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            Country countryMap = _mapper.Map<Country>(updatedCountry);
+
+            if (!_countryRepository.UpdateCountry(countryMap))
+            {
+                ModelState.AddModelError("", "Something went wrong during updating country.");
+                return StatusCode(500, ModelState);
+            }
+            return NoContent();
+        }
+
+        [HttpDelete("{countryId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult DeteleCountry(int countryId)
+        {
+            if (!_countryRepository.CountryExists(countryId))
+                return NotFound();
+
+            Country countryToDelete = _countryRepository.GetCountry(countryId);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!_countryRepository.DeleteCountry(countryToDelete))
+            {
+                ModelState.AddModelError("", "Something went wrong during country deletion.");
+                return BadRequest(ModelState);
+            }
+
+            return NoContent();
+        }
     }
 }
